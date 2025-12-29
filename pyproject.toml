@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "antporter"
-version = "1.0.1"
+version = "1.0.2"
 description = "A simple tool for splitting and merging files to bypass HPC cluster file upload size limits"
 readme = "README.md"
 requires-python = ">=3.8"

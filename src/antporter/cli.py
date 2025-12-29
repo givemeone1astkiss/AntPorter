@@ -36,7 +36,8 @@ def cmd_split(args) -> int:
             input_file=input_file,
             chunk_size=chunk_size,
             output_dir=output_dir,
-            resume=not args.no_resume
+            resume=not args.no_resume,
+            remove_source=args.remove_source
         )
         
         splitter.split()
@@ -139,6 +140,9 @@ Examples:
   # Split with custom output directory
   antporter split data.zip --chunk-size 50MB --output-dir ./chunks
   
+  # Split and remove source file
+  antporter split data.zip --chunk-size 50MB --remove-source
+  
   # Merge chunks back to original file
   antporter merge large_file.tar.gz.meta.json
   
@@ -184,6 +188,11 @@ Examples:
         '--no-resume',
         action='store_true',
         help='Disable resume functionality (overwrite existing chunks)'
+    )
+    split_parser.add_argument(
+        '--remove-source',
+        action='store_true',
+        help='Remove source file after successful split'
     )
     
     # Merge command

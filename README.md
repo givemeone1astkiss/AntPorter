@@ -67,6 +67,7 @@ antporter split <file> --chunk-size <size> [options]
 - `--chunk-size, -s` - Chunk size (e.g., 100MB, 1GB, 500KB)
 - `--output-dir, -o` - Output directory
 - `--no-resume` - Disable resume functionality
+- `--remove-source` - Remove source file after successful split
 
 ### Merge Command
 
@@ -118,7 +119,11 @@ antporter split large_file.bin --chunk-size 100MB
 ### Scenario 3: Auto Cleanup
 
 ```bash
+# Remove chunks after merge
 antporter merge large_file.tar.gz.meta.json --cleanup
+
+# Remove source file after split
+antporter split large_file.tar.gz --chunk-size 100MB --remove-source
 ```
 
 ## 🐍 Python API
@@ -130,7 +135,8 @@ from antporter import FileSplitter, FileMerger
 splitter = FileSplitter.from_size_string(
     input_file="large_file.tar.gz",
     chunk_size_str="100MB",
-    output_dir="./chunks"
+    output_dir="./chunks",
+    remove_source=False  # Set to True to remove source file after split
 )
 metadata_path = splitter.split()
 
@@ -138,7 +144,7 @@ metadata_path = splitter.split()
 merger = FileMerger(
     metadata_file=metadata_path,
     verify=True,
-    cleanup=False
+    cleanup=False  # Set to True to remove chunks after merge
 )
 output_path = merger.merge()
 ```

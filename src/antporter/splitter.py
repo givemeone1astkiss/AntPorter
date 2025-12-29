@@ -19,7 +19,8 @@ class FileSplitter:
         input_file: Path,
         chunk_size: int,
         output_dir: Optional[Path] = None,
-        resume: bool = True
+        resume: bool = True,
+        remove_source: bool = False
     ):
         """
         Initialize file splitter.
@@ -29,11 +30,13 @@ class FileSplitter:
             chunk_size: Size of each chunk in bytes
             output_dir: Directory for output chunks (default: same as input file)
             resume: Whether to resume from existing chunks
+            remove_source: Whether to remove source file after successful split
         """
         self.input_file = Path(input_file)
         self.chunk_size = chunk_size
         self.output_dir = Path(output_dir) if output_dir else self.input_file.parent
         self.resume = resume
+        self.remove_source = remove_source
         
         if not self.input_file.exists():
             raise FileNotFoundError(f"Input file not found: {self.input_file}")
@@ -131,6 +134,15 @@ class FileSplitter:
         print(f"  Output directory: {self.output_dir}")
         print(f"  Metadata file: {metadata_path.name}")
         
+        # Remove source file if requested
+        if self.remove_source:
+            print(f"\nRemoving source file...")
+            try:
+                self.input_file.unlink()
+                print(f"✓ Source file removed: {self.input_file.name}")
+            except Exception as e:
+                print(f"Warning: Failed to remove source file: {e}")
+        
         return metadata_path
     
     @staticmethod
@@ -138,7 +150,8 @@ class FileSplitter:
         input_file: Path,
         chunk_size_str: str,
         output_dir: Optional[Path] = None,
-        resume: bool = True
+        resume: bool = True,
+        remove_source: bool = False
     ) -> 'FileSplitter':
         """
         Create FileSplitter from size string (e.g., "100MB", "1GB").
@@ -148,10 +161,11 @@ class FileSplitter:
             chunk_size_str: Chunk size as string (e.g., "100MB")
             output_dir: Directory for output chunks
             resume: Whether to resume from existing chunks
+            remove_source: Whether to remove source file after successful split
             
         Returns:
             FileSplitter instance
         """
         chunk_size = parse_size(chunk_size_str)
-        return FileSplitter(input_file, chunk_size, output_dir, resume)
+        return FileSplitter(input_file, chunk_size, output_dir, resume, remove_source)
 
